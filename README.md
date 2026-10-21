@@ -1,97 +1,186 @@
-# File Organizer
+# 📁 File Organizer Pro
 
-Aplicativo para organizar arquivos por extensão. Ele pode ser usado por uma tela
-gráfica ou pelo terminal e não sobrescreve arquivos existentes.
+<p align="center">
+  <img src="assets/icon.png" alt="File Organizer Logo" width="110" height="110" />
+</p>
 
-## Usando a tela
+<p align="center">
+  <strong>Organizador inteligente de arquivos e sentinela automatizado para Windows.</strong>
+</p>
 
-Com Python 3.9 ou superior instalado, execute:
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-3.9+-3776AB?style=flat-square&logo=python&logoColor=white" alt="Python 3.9+" />
+  <img src="https://img.shields.io/badge/Platform-Windows%20%7C%20Linux-0078D6?style=flat-square&logo=windows&logoColor=white" alt="Platform" />
+  <img src="https://img.shields.io/badge/UI-ttkbootstrap-20c997?style=flat-square" alt="ttkbootstrap" />
+  <img src="https://img.shields.io/badge/License-MIT-blue?style=flat-square" alt="License MIT" />
+  <img src="https://img.shields.io/badge/Build-.exe%20Standalone-orange?style=flat-square" alt="Executable" />
+</p>
 
+---
+
+## 💡 Sobre o Projeto
+
+O **File Organizer Pro** é um aplicativo de automação de produtividade projetado para eliminar a desorganização em pastas como *Downloads*, *Área de Trabalho* ou pastas de projetos. 
+
+Diferente de scripts convencionais que apenas separam por extensão, o File Organizer Pro conta com:
+- **Interface Gráfica Fluida (Smooth UI)** sem travamentos (processamento assíncrono multithread).
+- **Modo Sentinela (Zero-Click Automation)**: vigia pastas em segundo plano e move novos downloads assim que terminam.
+- **Regras Avançadas**: suporte a filtros por extensão (`.pdf`, `.png`) ou por **padrões de nome / wildcards** (`*fatura*`, `nota_fiscal_*`), com opção de **pastas de destino customizadas** para regras específicas.
+- **Sistema de Desfazer (Undo)**: reverte qualquer movimentação com apenas 1 clique através do histórico transacional.
+- **Anti-corrupção**: ignora arquivos temporários em download ativo (`.crdownload`, `.part`, `.tmp`).
+- **Executável Portátil (`.exe`)**: pronto para rodar sem precisar de Python instalado.
+
+---
+
+## 📥 Download Direto (.exe)
+
+Você pode baixar a versão compilada diretamente na aba de **[Releases](../../releases)**:
+
+1. Acesse **[Releases](../../releases)**.
+2. Baixe o arquivo **`FileOrganizer.exe`**.
+3. Dê dois cliques para abrir. Não requer instalação nem permissões de administrador.
+
+---
+
+## ✨ Funcionalidades Principais
+
+| Recurso | Descrição |
+| :--- | :--- |
+| ⚡ **Organização Rápida** | Selecione a pasta de origem e destino, escolha se deseja incluir subpastas e acompanhe o progresso suave em tempo real. |
+| 🛡️ **Modo Sentinela** | Deixe o app monitorando sua pasta de Downloads. Cada arquivo baixado é enviado imediatamente para o destino configurado. |
+| 🎯 **Gerenciador de Regras** | Crie categorias personalizadas, defina padrões específicos (ex: arquivos com "contrato" vão para uma pasta de Contratos) e configure caminhos dedicados. |
+| ⏪ **Histórico & Desfazer** | Moveu algo por engano? Clique em *Desfazer* para devolver cada arquivo exatamente para onde estava. |
+| 🌓 **Temas Modernos** | Alternância com um clique entre tema Claro (*Cosmo*) e tema Escuro (*Darkly*). |
+| 💻 **Linha de Comando (CLI)** | Suporte completo a automação via scripts, tarefas agendadas do Windows ou terminal. |
+
+---
+
+## 🚀 Como Executar pelo Código-Fonte
+
+### Pré-requisitos
+* **Python 3.9 ou superior** instalado.
+* `git` instalado.
+
+### Passo a passo
 ```bash
-python -m pip install -r requirements.txt
+# 1. Clone o repositório
+git clone https://github.com/SEU-USUARIO/file_organizer.git
+cd file_organizer
+
+# 2. Crie e ative um ambiente virtual (recomendado)
+python -m venv .venv
+.venv\Scripts\activate   # No Windows
+
+# 3. Instale as dependências
+pip install -r requirements.txt
+
+# 4. Inicie o aplicativo com interface gráfica
 python main.py
 ```
 
-Escolha a pasta **De** (origem) e a pasta **Para** (destino), depois clique em
-**Organizar arquivos**. As configurações avançadas ficam escondidas em
-**Opções**, para deixar o uso mais rápido. Nessa seção é possível incluir
-subpastas, simular a operação e alterar regras:
+---
 
-```text
-Imagens=.jpg,.png
-Documentos=.pdf,.docx,.txt
-```
+## 💻 Uso via Linha de Comando (CLI)
 
-Também é possível incluir subpastas ou executar uma simulação sem mover nada.
-
-## Usando o terminal
+O File Organizer Pro também pode ser executado em servidores ou integrado a outros scripts:
 
 ```bash
+# Organização direta com logs no terminal
 python main.py --cli --source "C:\Users\Bruno\Downloads" --destination "C:\Users\Bruno\Arquivos"
+
+# Simulação (Dry-run) sem mover arquivos
+python main.py --source "C:\Downloads" --destination "C:\Arquivos" --dry-run
+
+# Modo Sentinela contínuo no terminal
+python main.py --sentinel --source "C:\Downloads" --destination "C:\Arquivos"
+
+# Desfazer a última organização via terminal
+python main.py --undo
 ```
 
-Opções disponíveis:
+### Argumentos Disponíveis
+* `--source`: Pasta de origem.
+* `--destination`: Pasta de destino padrão.
+* `--rules`: Caminho para um arquivo `rules.json` customizado.
+* `--recursive`: Inclui recursivamente todas as subpastas.
+* `--dry-run`: Exibe o plano de ação sem tocar nos arquivos.
+* `--sentinel`: Monitora a pasta de origem em loop até você pressionar `Ctrl+C`.
+* `--undo`: Reverte o último lote de arquivos movidos.
 
-* `--rules regras.json`: usa categorias e extensões definidas em um JSON.
-* `--recursive`: procura arquivos dentro das subpastas da origem.
-* `--dry-run`: exibe as movimentações sem alterar arquivos.
+---
 
-Exemplo de `regras.json`:
+## 🔨 Como Compilar o `.exe` Localmente
 
-```json
-{
-  "Imagens": [".jpg", ".png", ".svg"],
-  "Trabalho": [".pdf", ".docx", ".xlsx"]
-}
-```
-
-## Como a lógica funciona
-
-1. O programa valida a origem e o destino. O destino não pode ser a própria
-   origem nem uma subpasta dela, evitando que o programa processe seus próprios
-   resultados.
-2. As regras são convertidas em um índice de extensão para categoria. A
-   comparação ignora maiúsculas e minúsculas (`.JPG` e `.jpg` são equivalentes).
-3. O programa percorre apenas arquivos (ou subpastas, quando `--recursive` é
-   usado). Extensões não cadastradas são ignoradas.
-4. Para cada arquivo reconhecido, cria `destino/Categoria` quando necessário e
-   move o arquivo para lá.
-5. Se já existir um arquivo com o mesmo nome, o programa escolhe um nome seguro,
-   como `relatorio (1).pdf`, em vez de substituir o arquivo original.
-6. Ao final, o terminal informa quantos arquivos foram movidos, ignorados e
-   quais falharam. A tela apresenta o resumo da operação.
-
-O núcleo da organização está na função `organize`, separado das interfaces.
-Isso permite testar ou reutilizar a lógica sem abrir a tela.
-
-## Gerando um executável no Windows
-
-Instale o PyInstaller e gere um executável de arquivo único:
+Para gerar seu próprio executável único:
 
 ```bash
-python -m pip install pyinstaller
-pyinstaller --onefile --windowed --name FileOrganizer main.py
+# Instale o PyInstaller
+pip install pyinstaller
+
+# Execute o script automatizado de build
+python build.py
 ```
 
-O arquivo `dist\FileOrganizer.exe` será criado. Ao abri-lo, a tela gráfica será
-exibida. Para usar o modo terminal no executável, abra o Prompt de Comando na
-pasta do arquivo e execute:
+Ou no Windows, dê dois cliques em **`build.bat`**. O executável será salvo em `dist/FileOrganizer.exe`.
+
+---
+
+## 🧪 Testes Automatizados
+
+Para rodar a suíte de testes unitários com o `pytest`:
+
+```bash
+pip install pytest
+pytest
+```
+
+---
+
+## 🏛️ Arquitetura do Projeto
 
 ```text
-FileOrganizer.exe --cli --source "C:\origem" --destination "C:\destino"
+file_organizer/
+├── .github/
+│   └── workflows/
+│       └── build-release.yml   # CI/CD: Compila e lança o .exe em cada Release
+├── assets/
+│   ├── icon.ico                # Ícone do executável Windows
+│   └── icon.png                # Imagem do logo
+├── src/
+│   ├── core/                   # Núcleo de regras e manipulação de arquivos
+│   │   ├── engine.py           # Motor de movimentação e resolução de nomes
+│   │   ├── history.py          # Histórico transacional e motor de Undo
+│   │   ├── models.py           # Dataclasses tipadas (Rule, MovedFile, etc.)
+│   │   ├── rules.py            # Gerenciador e avaliador de regras
+│   │   └── watcher.py          # Modo Sentinela (vigia de pastas assíncrono)
+│   └── ui/                     # Interface moderna ttkbootstrap
+│       └── main_window.py      # Janela principal com abas e multithreading
+├── tests/                      # Testes automatizados (pytest)
+│   ├── test_engine.py
+│   ├── test_rules.py
+│   └── test_watcher.py
+├── build.py                    # Script de compilação PyInstaller
+├── build.bat                   # Atalho de compilação rápida no Windows
+├── main.py                     # Ponto de entrada (GUI + CLI)
+├── pyproject.toml              # Metadados e dependências PEP 517/621
+├── requirements.txt            # Dependências de execução
+└── README.md                   # Documentação completa
 ```
 
-Para enxergar as mensagens do terminal ao gerar o executável, use `--console`
-no lugar de `--windowed`.
+---
 
-## Requisitos
+## 🤝 Como Contribuir
 
-* Python 3.9 ou superior (para executar o código-fonte).
-* `tkinter`, incluído na instalação padrão do Python para Windows.
-* `ttkbootstrap`, instalado com `python -m pip install -r requirements.txt`,
-  fornece o tema visual moderno. Se ele não estiver instalado, o programa usa
-  automaticamente os componentes nativos do Tkinter.
+Contribuições são muito bem-vindas! Se você tiver uma ideia de melhoria ou encontrar um bug:
 
-## Licença
+1. Faça um **Fork** do projeto.
+2. Crie uma branch para sua funcionalidade (`git checkout -b feature/minha-melhoria`).
+3. Commit suas alterações (`git commit -m 'feat: adiciona nova funcionalidade'`).
+4. Envie para o branch (`git push origin feature/minha-melhoria`).
+5. Abra um **Pull Request**.
 
-MIT. Consulte [LICENSE](LICENSE).
+---
+
+## 📄 Licença
+
+Distribuído sob a licença **MIT**. Consulte o arquivo [LICENSE](LICENSE) para mais informações.

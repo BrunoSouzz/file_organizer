@@ -1,0 +1,28 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# PyInstaller / Build outputs
+build/
+dist/
+*.spec
+
+# Testing & Coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Local User Configurations & History
+*.log
+history.json
+rules.json
+
+# Environment & IDEs
+.env
+.venv
+env/
+venv/
+ENV/
+.vscode/
+.idea/
