@@ -7,14 +7,15 @@ import queue
 import sys
 import threading
 from pathlib import Path
-from tkinter import filedialog, messagebox, ttk
 import tkinter as tk
+from tkinter import filedialog, messagebox
 
 try:
-    import ttkbootstrap as tb
+    import ttkbootstrap as ttk
     from ttkbootstrap.constants import *
     HAS_TTKBOOTSTRAP = True
 except ImportError:
+    from tkinter import ttk
     HAS_TTKBOOTSTRAP = False
 
 from ..core.engine import organize
@@ -38,17 +39,18 @@ class MainWindow:
 
     def __init__(self) -> None:
         self.theme_name = "cosmo"
+        self.current_theme_mode = "light"
         if HAS_TTKBOOTSTRAP:
-            self.root = tb.Window(
+            self.root = ttk.Window(
                 title="File Organizer Pro",
                 themename=self.theme_name,
-                size=(820, 640),
-                minsize=(740, 520),
+                size=(880, 650),
+                minsize=(780, 540),
             )
         else:
             self.root = tk.Tk()
             self.root.title("File Organizer Pro")
-            self.root.geometry("820x640")
+            self.root.geometry("880x650")
 
         # Configura ícone da janela
         icon_path = get_asset_path("icon.ico")
@@ -85,28 +87,55 @@ class MainWindow:
         self.root.columnconfigure(0, weight=1)
         self.root.rowconfigure(0, weight=1)
 
-        # Header principal com alternador de tema
-        header = ttk.Frame(self.root, padding=(16, 12, 16, 6))
+        # Header principal com alternador de tema e acessibilidade
+        header = ttk.Frame(self.root, padding=(18, 14, 18, 10))
         header.grid(row=0, column=0, sticky="ew")
-        header.columnconfigure(1, weight=1)
+        header.columnconfigure(0, weight=1)
+        header.columnconfigure(1, weight=0)
 
-        title_lbl = ttk.Label(header, text="📁 File Organizer", font=("Segoe UI", 16, "bold"))
-        title_lbl.grid(row=0, column=0, sticky="w")
+        # Lado esquerdo: Título e subtítulo
+        titles_frame = ttk.Frame(header)
+        titles_frame.grid(row=0, column=0, sticky="w")
+
+        title_lbl = ttk.Label(titles_frame, text="📁 File Organizer Pro", font=("Segoe UI", 16, "bold"))
+        title_lbl.pack(anchor="w")
         subtitle_lbl = ttk.Label(
-            header,
+            titles_frame,
             text="Automação inteligente para organizar seus arquivos com rapidez e segurança.",
             font=("Segoe UI", 9),
         )
-        subtitle_lbl.grid(row=1, column=0, sticky="w", pady=(2, 0))
+        subtitle_lbl.pack(anchor="w", pady=(2, 0))
 
+        # Lado direito: Seletor de Tema / Acessibilidade (Claro, Escuro, Alto Contraste)
         if HAS_TTKBOOTSTRAP:
-            theme_btn = tb.Button(
-                header,
-                text="🌓 Alternar Tema",
-                bootstyle="secondary-outline",
-                command=self._toggle_theme,
+            theme_box = ttk.Frame(header)
+            theme_box.grid(row=0, column=1, sticky="e", padx=(12, 0))
+
+            ttk.Label(theme_box, text="Tema:", font=("Segoe UI", 9, "bold")).pack(side=tk.LEFT, padx=(0, 6))
+
+            self.btn_theme_light = ttk.Button(
+                theme_box,
+                text="☀️ Claro",
+                bootstyle="primary",
+                command=lambda: self._set_theme("light"),
             )
-            theme_btn.grid(row=0, column=2, rowspan=2, sticky="e")
+            self.btn_theme_light.pack(side=tk.LEFT, padx=3)
+
+            self.btn_theme_dark = ttk.Button(
+                theme_box,
+                text="🌙 Escuro",
+                bootstyle="secondary-outline",
+                command=lambda: self._set_theme("dark"),
+            )
+            self.btn_theme_dark.pack(side=tk.LEFT, padx=3)
+
+            self.btn_theme_contrast = ttk.Button(
+                theme_box,
+                text="⚡ Alto Contraste",
+                bootstyle="warning-outline",
+                command=lambda: self._set_theme("contrast"),
+            )
+            self.btn_theme_contrast.pack(side=tk.LEFT, padx=3)
 
         # Notebook (Abas)
         notebook_frame = ttk.Frame(self.root, padding=(16, 6, 16, 16))
@@ -175,18 +204,31 @@ class MainWindow:
         quick_frame = ttk.Frame(self.tab_organize)
         quick_frame.grid(row=2, column=1, sticky="w", padx=8, pady=(0, 8))
         ttk.Label(quick_frame, text="Atalhos rápidos:", font=("Segoe UI", 8)).pack(side=tk.LEFT, padx=(0, 6))
-        ttk.Button(
-            quick_frame,
-            text="Downloads",
-            style="secondary.TButton" if not HAS_TTKBOOTSTRAP else "secondary-link",
-            command=lambda: self.source_var.set(str(Path.home() / "Downloads")),
-        ).pack(side=tk.LEFT, padx=4)
-        ttk.Button(
-            quick_frame,
-            text="Área de Trabalho",
-            style="secondary.TButton" if not HAS_TTKBOOTSTRAP else "secondary-link",
-            command=lambda: self.source_var.set(str(Path.home() / "Desktop")),
-        ).pack(side=tk.LEFT, padx=4)
+
+        if HAS_TTKBOOTSTRAP:
+            ttk.Button(
+                quick_frame,
+                text="Downloads",
+                bootstyle="secondary-link",
+                command=lambda: self.source_var.set(str(Path.home() / "Downloads")),
+            ).pack(side=tk.LEFT, padx=4)
+            ttk.Button(
+                quick_frame,
+                text="Área de Trabalho",
+                bootstyle="secondary-link",
+                command=lambda: self.source_var.set(str(Path.home() / "Desktop")),
+            ).pack(side=tk.LEFT, padx=4)
+        else:
+            ttk.Button(
+                quick_frame,
+                text="Downloads",
+                command=lambda: self.source_var.set(str(Path.home() / "Downloads")),
+            ).pack(side=tk.LEFT, padx=4)
+            ttk.Button(
+                quick_frame,
+                text="Área de Trabalho",
+                command=lambda: self.source_var.set(str(Path.home() / "Desktop")),
+            ).pack(side=tk.LEFT, padx=4)
 
         # Opções
         opts_frame = ttk.Frame(self.tab_organize)
@@ -207,13 +249,13 @@ class MainWindow:
         btn_frame.columnconfigure(1, weight=1)
 
         if HAS_TTKBOOTSTRAP:
-            self.run_btn = tb.Button(
+            self.run_btn = ttk.Button(
                 btn_frame,
                 text="🚀 Organizar Arquivos Agora",
                 bootstyle="success",
                 command=self._start_organization,
             )
-            self.undo_btn = tb.Button(
+            self.undo_btn = ttk.Button(
                 btn_frame,
                 text="⏪ Desfazer Última",
                 bootstyle="warning-outline",
@@ -346,7 +388,7 @@ class MainWindow:
         control_frame.columnconfigure(1, weight=1)
 
         if HAS_TTKBOOTSTRAP:
-            self.sentinel_btn = tb.Button(
+            self.sentinel_btn = ttk.Button(
                 control_frame,
                 text="▶ Ativar Sentinela",
                 bootstyle="info",
@@ -421,12 +463,31 @@ class MainWindow:
     # -------------------------------------------------------------
     # CONTROLADORES E LOGICA DE EVENTOS
     # -------------------------------------------------------------
-    def _toggle_theme(self) -> None:
+    def _set_theme(self, mode: str) -> None:
+        """Altera dinamicamente o tema entre Claro, Escuro e Alto Contraste."""
         if not HAS_TTKBOOTSTRAP:
             return
-        current = self.root.style.theme.name
-        new_theme = "darkly" if current == "cosmo" else "cosmo"
-        self.root.style.theme_use(new_theme)
+
+        self.current_theme_mode = mode
+        theme_map = {
+            "light": "cosmo",
+            "dark": "darkly",
+            "contrast": "cyborg",
+        }
+        theme_name = theme_map.get(mode, "cosmo")
+        self.root.style.theme_use(theme_name)
+
+        # Atualiza o realce visual dos botões de seleção de tema
+        if hasattr(self, "btn_theme_light"):
+            self.btn_theme_light.configure(
+                bootstyle="primary" if mode == "light" else "secondary-outline"
+            )
+            self.btn_theme_dark.configure(
+                bootstyle="primary" if mode == "dark" else "secondary-outline"
+            )
+            self.btn_theme_contrast.configure(
+                bootstyle="warning" if mode == "contrast" else "warning-outline"
+            )
 
     def _choose_directory(self, target_var: tk.StringVar) -> None:
         selected = filedialog.askdirectory(initialdir=target_var.get() or Path.home())
