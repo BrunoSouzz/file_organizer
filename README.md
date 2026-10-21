@@ -86,7 +86,7 @@ O File Organizer Pro também pode ser executado em servidores ou integrado a out
 
 ```bash
 # Organização direta com logs no terminal
-python main.py --cli --source "C:\Users\Bruno\Downloads" --destination "C:\Users\Bruno\Arquivos"
+python main.py --cli --source "C:\Users\SEU-USUARIO\Downloads" --destination "C:\Users\SEU-USUARIO\Arquivos"
 
 # Simulação (Dry-run) sem mover arquivos
 python main.py --source "C:\Downloads" --destination "C:\Arquivos" --dry-run
